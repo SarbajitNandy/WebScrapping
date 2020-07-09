@@ -1,6 +1,6 @@
 const puppeteer = require("puppeteer");
 
-const json2String = (list_of_obj) => {
+exports.json2String = (list_of_obj) => {
     let str = "";
     for(let item of list_of_obj) {
         for(const [key, value] of Object.entries(item)) {

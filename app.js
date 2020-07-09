@@ -1,5 +1,8 @@
+require("dotenv").config()
+
 const {go} = require("./input_scrap");
-const { getTarget, whatAppWritter } = require("./whatapp_bot");
+const { json2String } = require("./whatapp_bot");
+const {twilioWriter} = require("./twilio_bot");
 
 const uris = [
     "https://www.amazon.in/LG-inch-55cm-LCD-Monitor/dp/B01IBM5V66/",
@@ -12,7 +15,7 @@ function sleep(ms) {
 
 const driver = async() => {
 
-    const {target, browser, page} = await getTarget();
+    // const {target, browser, page} = await getTarget();
 
     let pre=[] , curr =[];
     // await setInterval(async()=>{
@@ -40,7 +43,9 @@ const driver = async() => {
         // console.log("curr", curr)
         
         if (curr.length!==pre.length) {
-            await whatAppWritter(target, page, curr);
+            // await whatAppWritter(target, page, curr);
+            const data_as_string = json2String(curr);
+            await twilioWriter(data_as_string);
         } else {
             let filter_data = []
             for(let i=0; i<curr.length;i++) {
@@ -48,13 +53,13 @@ const driver = async() => {
                     filter_data.push(curr[i]);
                 }
             }
-            if (filter_data.length) await whatAppWritter(target, page, filter_data);
+            if (filter_data.length) await twilioWriter(json2String(filter_data));
             else console.log("No New Information")
         }
 
         pre = curr;
         console.log("sleeping")
-        await sleep(1000000);
+        await sleep(300000);
     }
 
     // setInterval(() => {
